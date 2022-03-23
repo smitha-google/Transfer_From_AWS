@@ -27,8 +27,8 @@ from airflow.providers.google.cloud.hooks.cloud_storage_transfer_service import 
     GcpTransferJobsStatus,
     GcpTransferOperationStatus,
 )
-from airflow.providers.google.cloud.operators.cloud_storage_transfer_service import CloudDataTransferServiceCreateJobOperator
 
+from airflow.providers.google.cloud.operators.cloud_storage_transfer_service import CloudDataTransferServiceCreateJobOperator
 
 @task()
 def transform_message():
@@ -64,7 +64,6 @@ def create_transfer():
 	 
     gcp_transfer_job_name = f"transferJobs/{ti.task_id}-{execution_date}"
    
-
     aws_to_gcs_transfer_body = {
         DESCRIPTION: "transfer job from aws",
         STATUS: GcpTransferJobsStatus.ENABLED,
@@ -90,8 +89,6 @@ def create_transfer():
 
     create_transfer_job_from_aws.execute(context)
 
-       
-
 with DAG(
     dag_id='transfer_from_aws',
     schedule_interval=None,
@@ -100,7 +97,6 @@ with DAG(
     catchup=False,
 ) as dag:
    
-
     read_from_queue = SqsSensor(
         task_id='read_from_queue',
         sqs_queue='URI_OF_SQS_QUEUE',
@@ -111,8 +107,5 @@ with DAG(
         message_filtering_match_values=None,
         message_filtering_config=None,
     )
-
-    
-         
-    
+             
 read_from_queue >> transform_message() >> create_transfer()
